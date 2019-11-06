@@ -8,5 +8,8 @@
 %include "habets38_swig_doc.i"
 
 %{
+#include "habets38/sweepsink.h"
 %}
 
+%include "habets38/sweepsink.h"
+GR_SWIG_BLOCK_MAGIC2(habets38, sweepsink);

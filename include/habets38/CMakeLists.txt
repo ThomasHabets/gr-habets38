@@ -23,5 +23,5 @@
 ########################################################################
 install(FILES
     api.h
-    DESTINATION include/habets38
+    sweepsink.h DESTINATION include/habets38
 )
