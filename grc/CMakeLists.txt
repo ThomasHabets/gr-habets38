@@ -19,5 +19,6 @@
 # Boston, MA 02110-1301, USA.
 
 install(FILES
-    habets38_sweepsink.block.yml DESTINATION share/gnuradio/grc/blocks
+    habets38_sweepsink.block.yml
+    habets38_sweepsinkv.block.yml DESTINATION share/gnuradio/grc/blocks
 )
