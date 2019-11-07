@@ -30,9 +30,12 @@ namespace gr {
     {
      private:
       // Nothing to declare in this block.
-
+            pmt::pmt_t d_label;
+            uint64_t d_value{};
+            long double d_sum{};
+            uint64_t d_count{};
      public:
-      sweepsink_impl(label);
+            sweepsink_impl(const std::string& label);
       ~sweepsink_impl();
 
       // Where all the action really happens
@@ -47,4 +50,3 @@ namespace gr {
 } // namespace gr
 
 #endif /* INCLUDED_HABETS38_SWEEPSINK_IMPL_H */
-

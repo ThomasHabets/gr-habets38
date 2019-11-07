@@ -22,6 +22,9 @@
 #include "config.h"
 #endif
 
+#include <numeric>
+#include <chrono>
+
 #include <gnuradio/io_signature.h>
 #include "sweepsink_impl.h"
 
@@ -29,7 +32,7 @@ namespace gr {
   namespace habets38 {
 
     sweepsink::sptr
-    sweepsink::make(label)
+    sweepsink::make(const std::string& label)
     {
       return gnuradio::get_initial_sptr
         (new sweepsink_impl(label));
@@ -39,10 +42,11 @@ namespace gr {
     /*
      * The private constructor
      */
-    sweepsink_impl::sweepsink_impl(label)
+          sweepsink_impl::sweepsink_impl(const std::string& label)
       : gr::sync_block("sweepsink",
-              gr::io_signature::make(<+MIN_IN+>, <+MAX_IN+>, sizeof(<+ITYPE+>)),
-              gr::io_signature::make(0, 0, 0))
+              gr::io_signature::make(1, 1, sizeof(float)),
+                       gr::io_signature::make(0, 0, 0)),
+        d_label(pmt::intern(label))
     {}
 
     /*
@@ -57,14 +61,45 @@ namespace gr {
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
     {
-      const <+ITYPE+> *in = (const <+ITYPE+> *) input_items[0];
+      const float *in = (const float *) input_items[0];
+      const auto startN = nitems_read(0);
+      /////////////
 
-      // Do <+signal processing+>
+      std::vector<tag_t> tags;
+      get_tags_in_window(tags, 0, 0, noutput_items, d_label);
+      if (tags.empty()) {
+              //std::cout << "no tag!\n";
+              d_count += noutput_items;
+              d_sum = std::accumulate(&in[0], &in[noutput_items], d_sum);
+              return noutput_items;
+      }
 
-      // Tell runtime system how many output items we produced.
-      return noutput_items;
+      // Get data.
+      const auto& tag = tags[0];
+      const auto rel = tag.offset - startN;
+      const uint64_t value = (uint64_t)pmt::to_float(tag.value);
+      //std::cout << "tag at " << rel << std::endl;
+      if (rel > 0) {
+              d_count += rel;
+              d_sum = std::accumulate(&in[0], &in[rel], d_sum);
+              return rel;
+      }
+
+      if (value != d_value) {
+              const std::chrono::seconds sec(1);
+              const auto now = std::chrono::system_clock::now();
+              const auto uni = (now.time_since_epoch() / sec);
+              if (d_value > 0) {
+                      std::cout << uni << " " << d_value << " " << (d_sum/d_count) << std::endl;
+              }
+              d_sum = 0;
+              d_count = 0;
+              d_value = value;
+      }
+      d_sum += in[0];
+      d_count++;
+      return 1;
     }
 
   } /* namespace habets38 */
 } /* namespace gr */
-

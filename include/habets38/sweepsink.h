@@ -45,11 +45,10 @@ namespace gr {
        * class. habets38::sweepsink::make is the public interface for
        * creating new instances.
        */
-      static sptr make(label="rx_freq");
+      static sptr make(const std::string& label);
     };
 
   } // namespace habets38
 } // namespace gr
 
 #endif /* INCLUDED_HABETS38_SWEEPSINK_H */
-
