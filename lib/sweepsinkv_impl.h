@@ -36,6 +36,8 @@ private:
     uint64_t d_freq;
     std::vector<long double> d_sum;
     uint64_t d_count{};
+    std::deque<char> d_buf;
+    const size_t d_buf_max = 1048576;
 
 public:
     sweepsinkv_impl(std::string tag, int vlen);

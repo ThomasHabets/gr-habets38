@@ -65,17 +65,29 @@ int sweepsinkv_impl::general_work(int noutput_items,
                                   gr_vector_const_void_star& input_items,
                                   gr_vector_void_star& output_items)
 {
-    const float* in = (const float*)input_items[0];
-    char* out = (char*)output_items[0];
+    if (!d_buf.empty()) {
+        const size_t cnt = std::min(d_buf.size(), (size_t)noutput_items);
+        auto from = d_buf.begin();
+        auto to = d_buf.begin() + cnt;
+        auto out = reinterpret_cast<char*>(output_items[0]);
+        std::copy(from, to, out);
+        d_buf.erase(from, to);
+        return cnt;
+    }
+
+    // Don't read more data if buffer is full.
+    if (d_buf.size() > d_buf_max) {
+        return 0;
+    }
+
+    // Convenience variables.
+    auto in = reinterpret_cast<const float*>(input_items[0]);
+    const size_t inlen = ninput_items[0];
     const auto startN = nitems_read(0);
 
-    ///////////////
-
-    std::vector<tag_t> tags;
-    get_tags_in_window(tags, 0, 0, noutput_items, d_tag);
-
+    // Helper function for consuming data.
     auto consumeN = [&](size_t consume) {
-        //                              std::cout << "consuming " << consume << std::endl;
+        // std::cout << "consuming " << consume << std::endl;
         for (int j = 0; j < consume; j++) {
             for (int i = 0; i < d_vlen; i++) {
                 d_sum[i] += *in++;
@@ -83,12 +95,16 @@ int sweepsinkv_impl::general_work(int noutput_items,
         }
         d_count += consume;
         consume_each(consume);
+        // Return 0 for convenience. This function never produces output.
         return 0;
     };
 
+    std::vector<tag_t> tags;
+    get_tags_in_window(tags, 0, 0, inlen, d_tag);
+
     if (tags.empty()) {
-        // std::cout << "no tags, consuming " << ninput_items[0] << std::endl;
-        return consumeN(ninput_items[0]);
+        // std::cout << "no tags, consuming all " << ninput_items[0] << std::endl;
+        return consumeN(inlen);
     }
 
     // Get tag data.
@@ -96,10 +112,14 @@ int sweepsinkv_impl::general_work(int noutput_items,
     const auto rel = tag.offset - startN;
     const uint64_t freq = (uint64_t)pmt::to_float(tag.value);
 
+    // If tag is not on the first sample, consume up to tag.
     if (rel > 0) {
         return consumeN(rel);
     }
 
+    // Below: Tag is on first sample.
+
+    // New tag is different from old tag.
     if (freq != d_freq) {
         const std::chrono::seconds sec(1);
         const auto now = std::chrono::system_clock::now();
@@ -109,19 +129,18 @@ int sweepsinkv_impl::general_work(int noutput_items,
                 const int bucket = b - d_vlen / 2;
                 const float bucket_size = static_cast<float>(d_samprate) / d_vlen;
                 const auto bfreq = (d_freq + bucket_size * bucket);
-                std::cout << uni << " " << static_cast<uint64_t>(bfreq) << " "
-                          << std::setw(11) << (d_sum[b] / d_count) << std::endl;
+                std::stringstream ss;
+                ss << uni << " " << static_cast<uint64_t>(bfreq) << " " << std::setw(11)
+                   << (d_sum[b] / d_count) << std::endl;
+                const std::string s = ss.str();
+                d_buf.insert(d_buf.end(), s.begin(), s.end());
             }
-            std::cout << std::endl;
         }
         d_sum = std::vector<long double>(d_vlen);
         d_count = 0;
         d_freq = freq;
     }
-    consumeN(1);
-
-    // Tell runtime system how many output items we produced.
-    return 0;
+    return consumeN(1);
 }
 
 } /* namespace habets38 */
