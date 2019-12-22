@@ -21,34 +21,34 @@
 #ifndef INCLUDED_HABETS38_SWEEPSINK_H
 #define INCLUDED_HABETS38_SWEEPSINK_H
 
-#include <habets38/api.h>
 #include <gnuradio/sync_block.h>
+#include <habets38/api.h>
 
 namespace gr {
-  namespace habets38 {
+namespace habets38 {
+
+/*!
+ * \brief <+description of block+>
+ * \ingroup habets38
+ *
+ */
+class HABETS38_API sweepsink : virtual public gr::sync_block
+{
+public:
+    typedef boost::shared_ptr<sweepsink> sptr;
 
     /*!
-     * \brief <+description of block+>
-     * \ingroup habets38
+     * \brief Return a shared_ptr to a new instance of habets38::sweepsink.
      *
+     * To avoid accidental use of raw pointers, habets38::sweepsink's
+     * constructor is in a private implementation
+     * class. habets38::sweepsink::make is the public interface for
+     * creating new instances.
      */
-    class HABETS38_API sweepsink : virtual public gr::sync_block
-    {
-     public:
-      typedef boost::shared_ptr<sweepsink> sptr;
+    static sptr make(const std::string& label);
+};
 
-      /*!
-       * \brief Return a shared_ptr to a new instance of habets38::sweepsink.
-       *
-       * To avoid accidental use of raw pointers, habets38::sweepsink's
-       * constructor is in a private implementation
-       * class. habets38::sweepsink::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(const std::string& label);
-    };
-
-  } // namespace habets38
+} // namespace habets38
 } // namespace gr
 
 #endif /* INCLUDED_HABETS38_SWEEPSINK_H */

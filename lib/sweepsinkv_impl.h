@@ -24,34 +24,33 @@
 #include <habets38/sweepsinkv.h>
 
 namespace gr {
-  namespace habets38 {
+namespace habets38 {
 
-    class sweepsinkv_impl : public sweepsinkv
-    {
-     private:
-      // Nothing to declare in this block.
-            const size_t d_vlen;
-            const pmt::pmt_t d_tag;
-            const uint64_t d_samprate;
-            uint64_t d_freq;
-            std::vector<long double> d_sum;
-            uint64_t d_count{};
+class sweepsinkv_impl : public sweepsinkv
+{
+private:
+    // Nothing to declare in this block.
+    const size_t d_vlen;
+    const pmt::pmt_t d_tag;
+    const uint64_t d_samprate;
+    uint64_t d_freq;
+    std::vector<long double> d_sum;
+    uint64_t d_count{};
 
-     public:
-      sweepsinkv_impl(std::string tag, int vlen);
-      ~sweepsinkv_impl();
+public:
+    sweepsinkv_impl(std::string tag, int vlen);
+    ~sweepsinkv_impl();
 
-      // Where all the action really happens
-      void forecast (int noutput_items, gr_vector_int &ninput_items_required);
+    // Where all the action really happens
+    void forecast(int noutput_items, gr_vector_int& ninput_items_required);
 
-      int general_work(int noutput_items,
-           gr_vector_int &ninput_items,
-           gr_vector_const_void_star &input_items,
-           gr_vector_void_star &output_items);
+    int general_work(int noutput_items,
+                     gr_vector_int& ninput_items,
+                     gr_vector_const_void_star& input_items,
+                     gr_vector_void_star& output_items);
+};
 
-    };
-
-  } // namespace habets38
+} // namespace habets38
 } // namespace gr
 
 #endif /* INCLUDED_HABETS38_SWEEPSINKV_IMPL_H */

@@ -21,35 +21,34 @@
 #ifndef INCLUDED_HABETS38_SWEEPSINKV_H
 #define INCLUDED_HABETS38_SWEEPSINKV_H
 
-#include <habets38/api.h>
 #include <gnuradio/block.h>
+#include <habets38/api.h>
 
 namespace gr {
-  namespace habets38 {
+namespace habets38 {
+
+/*!
+ * \brief <+description of block+>
+ * \ingroup habets38
+ *
+ */
+class HABETS38_API sweepsinkv : virtual public gr::block
+{
+public:
+    typedef boost::shared_ptr<sweepsinkv> sptr;
 
     /*!
-     * \brief <+description of block+>
-     * \ingroup habets38
+     * \brief Return a shared_ptr to a new instance of habets38::sweepsinkv.
      *
+     * To avoid accidental use of raw pointers, habets38::sweepsinkv's
+     * constructor is in a private implementation
+     * class. habets38::sweepsinkv::make is the public interface for
+     * creating new instances.
      */
-    class HABETS38_API sweepsinkv : virtual public gr::block
-    {
-     public:
-      typedef boost::shared_ptr<sweepsinkv> sptr;
+    static sptr make(std::string tag, int vlen);
+};
 
-      /*!
-       * \brief Return a shared_ptr to a new instance of habets38::sweepsinkv.
-       *
-       * To avoid accidental use of raw pointers, habets38::sweepsinkv's
-       * constructor is in a private implementation
-       * class. habets38::sweepsinkv::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(std::string tag, int vlen);
-    };
-
-  } // namespace habets38
+} // namespace habets38
 } // namespace gr
 
 #endif /* INCLUDED_HABETS38_SWEEPSINKV_H */
-

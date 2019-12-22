@@ -24,29 +24,28 @@
 #include <habets38/sweepsink.h>
 
 namespace gr {
-  namespace habets38 {
+namespace habets38 {
 
-    class sweepsink_impl : public sweepsink
-    {
-     private:
-      // Nothing to declare in this block.
-            pmt::pmt_t d_label;
-            uint64_t d_value{};
-            long double d_sum{};
-            uint64_t d_count{};
-     public:
-            sweepsink_impl(const std::string& label);
-      ~sweepsink_impl();
+class sweepsink_impl : public sweepsink
+{
+private:
+    // Nothing to declare in this block.
+    pmt::pmt_t d_label;
+    uint64_t d_value{};
+    long double d_sum{};
+    uint64_t d_count{};
 
-      // Where all the action really happens
-      int work(
-              int noutput_items,
-              gr_vector_const_void_star &input_items,
-              gr_vector_void_star &output_items
-      );
-    };
+public:
+    sweepsink_impl(const std::string& label);
+    ~sweepsink_impl();
 
-  } // namespace habets38
+    // Where all the action really happens
+    int work(int noutput_items,
+             gr_vector_const_void_star& input_items,
+             gr_vector_void_star& output_items);
+};
+
+} // namespace habets38
 } // namespace gr
 
 #endif /* INCLUDED_HABETS38_SWEEPSINK_IMPL_H */
