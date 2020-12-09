@@ -10,9 +10,12 @@
 %{
 #include "habets38/sweepsink.h"
 #include "habets38/sweepsinkv.h"
+#include "habets38/uart_encoder.h"
 %}
 
 %include "habets38/sweepsink.h"
 GR_SWIG_BLOCK_MAGIC2(habets38, sweepsink);
 %include "habets38/sweepsinkv.h"
 GR_SWIG_BLOCK_MAGIC2(habets38, sweepsinkv);
+%include "habets38/uart_encoder.h"
+GR_SWIG_BLOCK_MAGIC2(habets38, uart_encoder);
