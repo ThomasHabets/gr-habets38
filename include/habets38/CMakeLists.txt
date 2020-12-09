@@ -25,5 +25,6 @@ install(FILES
     api.h
     sweepsink.h
     sweepsinkv.h
-    uart_encoder.h DESTINATION include/habets38
+    uart_encoder.h
+    uart_decoder.h DESTINATION include/habets38
 )

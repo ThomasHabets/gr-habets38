@@ -21,5 +21,6 @@
 install(FILES
     habets38_sweepsink.block.yml
     habets38_sweepsinkv.block.yml
-    habets38_uart_encoder.block.yml DESTINATION share/gnuradio/grc/blocks
+    habets38_uart_encoder.block.yml
+    habets38_uart_decoder.block.yml DESTINATION share/gnuradio/grc/blocks
 )
