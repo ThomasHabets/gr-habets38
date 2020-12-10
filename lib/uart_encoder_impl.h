@@ -690,8 +690,6 @@ private:
   const int d_parity;
   const int d_stop;
 
-  std::vector<char> d_buf;
-
   int block_size() const noexcept {
     return d_start + d_bits + d_parity + d_stop;
   }

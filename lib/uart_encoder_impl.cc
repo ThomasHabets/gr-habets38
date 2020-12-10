@@ -687,6 +687,13 @@
 namespace gr {
 namespace habets38 {
 
+namespace {
+namespace special_value {
+constexpr short idle = 0;
+constexpr short brk = 1;
+} // namespace special_value
+} // namespace
+
 uart_encoder::sptr uart_encoder::make(int start, int bits, int parity,
                                       int stop) {
   return gnuradio::get_initial_sptr(
@@ -698,11 +705,10 @@ uart_encoder::sptr uart_encoder::make(int start, int bits, int parity,
  */
 uart_encoder_impl::uart_encoder_impl(int start, int bits, int parity, int stop)
     : gr::sync_interpolator("uart_encoder",
-                            gr::io_signature::make(1, 1, sizeof(char)),
+                            gr::io_signature::make(1, 1, sizeof(short)),
                             gr::io_signature::make(1, 1, sizeof(char)),
                             start + bits + parity + stop),
-      d_start(start), d_bits(bits), d_parity(parity), d_stop(stop),
-      d_buf(block_size()) {
+      d_start(start), d_bits(bits), d_parity(parity), d_stop(stop) {
   set_output_multiple(block_size());
 }
 
@@ -719,22 +725,42 @@ void uart_encoder_impl::forecast(int noutput_items,
 int uart_encoder_impl::work(int noutput_items,
                             gr_vector_const_void_star &input_items,
                             gr_vector_void_star &output_items) {
-  auto in = static_cast<const char *>(input_items[0]);
+  auto in = static_cast<const short *>(input_items[0]);
   auto out = static_cast<char *>(output_items[0]);
   const int n = fixed_rate_noutput_to_ninput(noutput_items);
   if (!n) {
+    std::clog
+        << "UART Encoder> Called with insufficient buffer to do anything\n";
     return 0;
   }
-  const char *pi = in;
+
+  auto pi = in;
   char *po = out;
-  for (int c = 0; c < n; c++) {
+  for (int c = 0; c < n; c++, pi++) {
+    // Idle.
+    if (*pi == special_value::idle) {
+      for (int bit = 0; bit < block_size(); bit++) {
+        *out++ = 1;
+      }
+      continue;
+    }
+
+    // Break.
+    if (*pi == special_value::brk) {
+      for (int bit = 0; bit < block_size(); bit++) {
+        *out++ = 0;
+      }
+      continue;
+    }
+
     // Start bits.
     for (int bit = 0; bit < d_start; bit++) {
       *out++ = 0;
     }
 
+    const auto byte = static_cast<char>(*pi >> 8);
     for (int bit = 0; bit < d_bits; bit++) {
-      *out++ = !!(*pi & (1 << bit));
+      *out++ = !!(byte & (1 << bit));
     }
     // TODO: parity.
 
@@ -742,7 +768,6 @@ int uart_encoder_impl::work(int noutput_items,
     for (int bit = 0; bit < d_stop; bit++) {
       *out++ = 1;
     }
-    pi++;
   }
   return fixed_rate_ninput_to_noutput(n);
 }
