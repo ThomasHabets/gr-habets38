@@ -703,12 +703,12 @@ uart_encoder::sptr uart_encoder::make(int start, int bits, int parity,
 /*
  * The private constructor
  */
-uart_encoder_impl::uart_encoder_impl(int start, int bits, int parity, int stop)
-    : gr::sync_interpolator("uart_encoder",
-                            gr::io_signature::make(1, 1, sizeof(short)),
-                            gr::io_signature::make(1, 1, sizeof(char)),
-                            start + bits + parity + stop),
-      d_start(start), d_bits(bits), d_parity(parity), d_stop(stop) {
+uart_encoder_impl::uart_encoder_impl(int start, int bits, int par, int stop)
+    : gr::sync_interpolator(
+          "uart_encoder", gr::io_signature::make(1, 1, sizeof(short)),
+          gr::io_signature::make(1, 1, sizeof(char)),
+          start + bits + (parity(par) != parity::none) + stop),
+      d_start(start), d_bits(bits), d_parity(parity(par)), d_stop(stop) {
   set_output_multiple(block_size());
 }
 
@@ -759,10 +759,26 @@ int uart_encoder_impl::work(int noutput_items,
     }
 
     const auto byte = static_cast<char>(*pi >> 8);
-    for (int bit = 0; bit < d_bits; bit++) {
-      *out++ = !!(byte & (1 << bit));
+    const auto par = [&out, this, &byte]() -> char {
+      char par = 0;
+      for (int bit = 0; bit < d_bits; bit++) {
+        const char ch = !!(byte & (1 << bit));
+        par ^= ch;
+        *out++ = ch;
+      }
+      return par;
+    };
+
+    switch (d_parity) {
+    case parity::none:
+      break;
+    case parity::odd:
+      *out++ = par();
+      break;
+    case parity::even:
+      *out++ = !par();
+      break;
     }
-    // TODO: parity.
 
     // Stop bits.
     for (int bit = 0; bit < d_stop; bit++) {

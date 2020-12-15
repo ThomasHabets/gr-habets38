@@ -680,16 +680,23 @@
 
 #include <habets38/uart_decoder.h>
 
+#include "uart_encoder_impl.h"
+
 namespace gr {
 namespace habets38 {
 
 class uart_decoder_impl : public uart_decoder {
 private:
-  // Nothing to declare in this block.
+  using parity = uart::parity;
   const int d_start;
   const int d_bits;
-  const int d_parity;
+  const parity d_parity;
   const int d_stop;
+
+  int block_size() const noexcept {
+    return d_start + d_bits + parity_size() + d_stop;
+  }
+  int parity_size() const noexcept { return (d_parity != parity::none); }
 
 public:
   uart_decoder_impl(int start, int bits, int parity, int stop);

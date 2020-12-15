@@ -683,16 +683,26 @@
 namespace gr {
 namespace habets38 {
 
+namespace uart {
+enum class parity {
+  none = 0,
+  odd = 1,
+  even = 2,
+};
+}
+
 class uart_encoder_impl : public uart_encoder {
 private:
+  using parity = uart::parity;
   const int d_start;
   const int d_bits;
-  const int d_parity;
+  const parity d_parity;
   const int d_stop;
 
   int block_size() const noexcept {
-    return d_start + d_bits + d_parity + d_stop;
+    return d_start + d_bits + parity_size() + d_stop;
   }
+  int parity_size() const noexcept { return (d_parity != parity::none); }
 
 public:
   uart_encoder_impl(int start, int bits, int parity, int stop);
