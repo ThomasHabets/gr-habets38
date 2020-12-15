@@ -46,3 +46,4 @@ GR_ADD_TEST(qa_sweepsink ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_swe
 GR_ADD_TEST(qa_sweepsinkv ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_sweepsinkv.py)
 GR_ADD_TEST(qa_uart_encoder ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_uart_encoder.py)
 GR_ADD_TEST(qa_uart_decoder ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_uart_decoder.py)
+GR_ADD_TEST(qa_despreader ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_despreader.py)

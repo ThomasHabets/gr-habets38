@@ -28,6 +28,7 @@ list(APPEND habets38_sources
     sweepsinkv_impl.cc
     uart_encoder_impl.cc
     uart_decoder_impl.cc
+    despreader_impl.cc
 )
 
 set(habets38_sources "${habets38_sources}" PARENT_SCOPE)
