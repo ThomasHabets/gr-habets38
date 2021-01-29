@@ -30,21 +30,21 @@
 namespace gr {
 namespace habets38 {
 
-sweepsinkv::sptr sweepsinkv::make(std::string tag, int vlen, float sampleRate)
+sweepsinkv::sptr sweepsinkv::make(std::string tag, int vlen, float samp_rate)
 {
-    return gnuradio::get_initial_sptr(new sweepsinkv_impl(tag, vlen, sampleRate));
+    return gnuradio::get_initial_sptr(new sweepsinkv_impl(tag, vlen, samp_rate));
 }
 
 
 /*
  * The private constructor
  */
-sweepsinkv_impl::sweepsinkv_impl(std::string tag, int vlen, float sampleRate)
+sweepsinkv_impl::sweepsinkv_impl(std::string tag, int vlen, float samp_rate)
     : gr::block("sweepsinkv",
                 gr::io_signature::make(1, 1, vlen * sizeof(float)),
                 gr::io_signature::make(1, 1, 1)),
       d_tag(pmt::intern(tag)),
-      d_samprate(sampleRate),
+      d_samprate(samp_rate),
       d_vlen(vlen),
       d_sum(vlen)
 {
@@ -124,10 +124,10 @@ int sweepsinkv_impl::general_work(int noutput_items,
         const std::chrono::seconds sec(1);
         const auto now = std::chrono::system_clock::now();
         const auto uni = (now.time_since_epoch() / sec);
+        const float bucket_size = d_samprate / d_vlen;
         if (d_freq > 0 && d_count > 0) {
             for (int b = 0; b < d_vlen; b++) {
                 const int bucket = b - d_vlen / 2;
-                const float bucket_size = static_cast<float>(d_samprate) / d_vlen;
                 const auto bfreq = (d_freq + bucket_size * bucket);
                 std::stringstream ss;
                 ss << uni << " " << static_cast<uint64_t>(bfreq) << " " << std::setw(11)

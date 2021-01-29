@@ -32,7 +32,7 @@ private:
     // Nothing to declare in this block.
     const size_t d_vlen;
     const pmt::pmt_t d_tag;
-    const uint64_t d_samprate;
+    const float d_samprate;
     uint64_t d_freq;
     std::vector<long double> d_sum;
     uint64_t d_count{};
@@ -40,7 +40,7 @@ private:
     const size_t d_buf_max = 1048576;
 
 public:
-    sweepsinkv_impl(std::string tag, int vlen, float sampleRate);
+    sweepsinkv_impl(std::string tag, int vlen, float samp_rate);
     ~sweepsinkv_impl();
 
     // Where all the action really happens

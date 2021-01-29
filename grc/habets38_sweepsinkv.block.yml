@@ -20,9 +20,10 @@ parameters:
   dtype: int
 
 
-- id: sampleRate
-  label: sampleRate
+- id: samp_rate
+  label: "Sample Rate"
   dtype: float
+  default: 8000000
 
 
 #  Make one 'inputs' list entry per input and one 'outputs' list entry per output.
