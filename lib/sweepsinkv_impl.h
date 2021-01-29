@@ -40,7 +40,7 @@ private:
     const size_t d_buf_max = 1048576;
 
 public:
-    sweepsinkv_impl(std::string tag, int vlen);
+    sweepsinkv_impl(std::string tag, int vlen, float sampleRate);
     ~sweepsinkv_impl();
 
     // Where all the action really happens

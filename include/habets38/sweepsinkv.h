@@ -45,7 +45,7 @@ public:
      * class. habets38::sweepsinkv::make is the public interface for
      * creating new instances.
      */
-    static sptr make(std::string tag, int vlen);
+    static sptr make(std::string tag, int vlen, float sampleRate);
 };
 
 } // namespace habets38

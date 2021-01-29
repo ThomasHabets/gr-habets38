@@ -30,21 +30,21 @@
 namespace gr {
 namespace habets38 {
 
-sweepsinkv::sptr sweepsinkv::make(std::string tag, int vlen)
+sweepsinkv::sptr sweepsinkv::make(std::string tag, int vlen, float sampleRate)
 {
-    return gnuradio::get_initial_sptr(new sweepsinkv_impl(tag, vlen));
+    return gnuradio::get_initial_sptr(new sweepsinkv_impl(tag, vlen, sampleRate));
 }
 
 
 /*
  * The private constructor
  */
-sweepsinkv_impl::sweepsinkv_impl(std::string tag, int vlen)
+sweepsinkv_impl::sweepsinkv_impl(std::string tag, int vlen, float sampleRate)
     : gr::block("sweepsinkv",
                 gr::io_signature::make(1, 1, vlen * sizeof(float)),
                 gr::io_signature::make(1, 1, 1)),
       d_tag(pmt::intern(tag)),
-      d_samprate(8000000),
+      d_samprate(sampleRate),
       d_vlen(vlen),
       d_sum(vlen)
 {
