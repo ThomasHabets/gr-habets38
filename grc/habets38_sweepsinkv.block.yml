@@ -4,7 +4,7 @@ category: '[habets38]'
 
 templates:
   imports: import habets38
-  make: habets38.sweepsinkv(${tag}, ${vlen})
+  make: habets38.sweepsinkv(${tag}, ${vlen}, ${samp_rate})
 
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:
